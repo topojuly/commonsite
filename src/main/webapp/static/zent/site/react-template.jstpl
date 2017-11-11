@@ -1,0 +1,72 @@
+import React, { Component } from 'react';
+IMPORTS
+
+DEMO_DECLARATIONS
+
+function RawHtmlRenderer(props) {
+  return <props.tag {...props.attributes} dangerouslySetInnerHTML={{ __html: props.html }}></props.tag>;
+}
+
+function Markdown(props) {
+  return <RawHtmlRenderer tag="section" html={props.html} attributes={{ className: 'zandoc-react-markdown' }}/>;
+}
+
+function Style(props) {
+  return <RawHtmlRenderer tag="style" html={props.style} />;
+}
+
+class Demo extends Component {
+  state = {
+    showCode: false
+  };
+
+  toggle = () => {
+    this.setState({
+      showCode: !this.state.showCode
+    });
+  };
+
+  render() {
+    const { showCode } = this.state;
+    const { title, src, children } = this.props;
+    return (
+      <div className="zandoc-react-demo">
+        <div className="zandoc-react-demo__preview">
+          {children}
+        </div>
+        <div className="zandoc-react-demo__bottom" onClick={this.toggle}>
+          <div className="zandoc-react-demo__title">
+            <p>{title || ''}</p>
+          </div>
+          <i
+            className={`zenticon zenticon-right zandoc-react-demo__toggle ${showCode ? 'zandoc-react-demo__toggle-on' : 'zandoc-react-demo__toggle-off'}`}
+          />
+        </div>
+        {showCode &&
+          <pre className="zandoc-react-demo__code">
+            <RawHtmlRenderer
+              tag="code"
+              html={src}
+              attributes={{
+                className: 'language-jsx'
+              }}
+            />
+          </pre>
+        }
+      </div>
+    )
+  }
+}
+
+export default class ZentDocContainer extends Component {
+  render() {
+    return React.createElement(
+      'div',
+      {
+        className: 'zandoc-react-container',
+        key: module.hot ? Math.random() : null
+      },
+      SECTIONS
+    );
+  }
+}
